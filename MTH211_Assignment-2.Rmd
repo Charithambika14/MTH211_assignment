@@ -1,0 +1,48 @@
+---
+title: "MTH211 - Assignment 2"
+author: "Group -G"
+date: "2023-05-04"
+output: html_document
+---
+
+***It seems that the percentage in 12th exam has a significant association with placement. Test, with appropriate assumptions, if the distribution of percentage in 12th grade differs significantly between placed people and not placed people.***
+
+We have used dataset for job placement present at Kaggle - ["Data-set"](https://www.kaggle.com/datasets/ahsan81/job-placement-dataset?resource=download)
+
+```{r}
+job_dat <- read.csv("Job_Placement_Data.csv")
+placed <- job_dat$hsc_percentage[job_dat$status == "Placed"]
+not_placed <- job_dat$hsc_percentage[job_dat$status == "Not Placed"]
+
+```
+Here **placed** variable is people's 12th grade percentage who are placed , **not_placed** variable is people's 12th grade percentage who are not placed.
+
+```{r,warning=F}
+library(ggplot2)
+ggplot(job_dat,aes(ssc_percentage ,fill = status)) + geom_bar(  width = .3)  + labs(title="12th grade percentage Vs Status")
+```
+
+We have assumed that the distribution of 12th grade percentage with placed as *Normal distribution* with parameters $(\mu_1,\sigma^2_1)$ and the another distribution of 12th grade percentage with not_placed as *Normal distribution* with parameters $(\mu_2,\sigma^2_2)$
+
+**Hypothesis:<br> $H_0$: $\sigma^2_1 = \sigma^2_2$  *VS*   $H_1$: $\sigma^2_1 \neq \sigma^2_2$**
+
+We are using F-test if our null hypothesis is true or not. For that we have used "var.test" function.
+
+```{r}
+var.test(placed, not_placed,"two.sided",ratio = 1)
+```
+
+As p-value (= 0.542) > 0.05 therefore, we will accept the null hypothesis i.e, $\sigma^2_1 = \sigma^2_2$.
+
+**Hypothesis: <br>$H_0$: $\mu_1 = \mu_2$  *VS*   $H_1$: $\mu_1 \neq \mu_2$  given that $\sigma^2_1 = \sigma^2_2 = \sigma^2$ **
+
+To check this hypothesis we are using "t.test" function.
+
+```{r}
+t.test(placed, not_placed,"two.sided",var.equal = T)
+```
+
+Here, p-value( =1.849e-14) < 0.05 therefore, we will reject our null hypothesis i.e, $\mu_1 \neq \mu_2$
+
+***Hence, we can conclude that distributions of placed and not placed people with respect to there 12th grade percentage are not equal.***
+
